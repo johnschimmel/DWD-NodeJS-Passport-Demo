@@ -54,7 +54,7 @@ exports.user_posts = function(req, res) {
             posts : blogposts, 
             currentUser : req.user,
             bloguser : user,
-            isOwner : req.user.id == user.id
+            //isOwner : req.user.id == user.id
 
           };
 
