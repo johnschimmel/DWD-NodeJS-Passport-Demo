@@ -13,7 +13,6 @@ var express = require('express')
   
 var app = express();
 
-
 // Express app configuration 
 app.configure(function(){
 
@@ -43,8 +42,9 @@ app.use(express.cookieParser(process.env.COOKIEHASH));
 
 //SESSION + connect-mongo mongoStore for session storage
 app.use(express.session({ 
-    store: new mongoStore({url:process.env.MONGOLAB_URI, maxAge: 300000})
-    , secret: process.env.COOKIEHASH
+    store: new mongoStore({url:process.env.MONGOLAB_URI}),
+    maxAge: 300000,
+    secret: process.env.COOKIEHASH
   })
 );
 
@@ -66,32 +66,35 @@ passport.deserializeUser(User.deserializeUser());
 
 // public routes
 var routes = require('./routes/index.js');
+
+// route file for login, register and logout
+var account = require('./routes/account.js');
+
 app.get('/', routes.index);
-app.get('/notes/:urltitle', routes.notes);
-app.get('/page/:pageslug', routes.pagedisplay);
 
-// admin routes
-var admin = require('./routes/admin.js');
-app.get('/admin',admin.ensureAuthenticated, admin.main);
+// create a blog post
+app.get('/write', account.ensureAuthenticated, routes.write);
+app.post('/write', account.ensureAuthenticated, routes.write_post);
 
-app.get('/admin/entry',admin.ensureAuthenticated, admin.create_note);
-app.get('/admin/edit/:documentid', admin.ensureAuthenticated, admin.edit_note_get);
-app.post('/admin/edit', admin.ensureAuthenticated, admin.edit_note_post);
+// edit a blog post
+app.get('/edit/:blogpost_id', account.ensureAuthenticated, routes.edit);
+app.post('/edit/:blogpost_id', account.ensureAuthenticated, routes.edit_post);
 
-app.get('/admin/page_entry', admin.ensureAuthenticated, admin.page_entry);
-app.get('/admin/page_edit/:documentid', admin.ensureAuthenticated, admin.page_edit);
-app.post('/admin/page_edit', admin.ensureAuthenticated, admin.page_edit_post);
+// login
+app.get('/login', account.login);
+app.post('/login', passport.authenticate('local'), account.login_post);
 
-// login, logout, register functions
-app.get('/admin/login',admin.login);
-app.post('/admin/login',passport.authenticate('local'), admin.login_post);
-app.get('/admin/logout', admin.logout);
-// app.get('/admin/register', admin.register);
-// app.post('/admin/register', admin.register_post);
+// register
+app.get('/register', account.register);
+app.post('/register', account.register_post);
+
+// logout
+app.get('/logout', account.logout);
 
 
+
+// Turn the server on!
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
   console.log("Listening on " + port);
-
 });

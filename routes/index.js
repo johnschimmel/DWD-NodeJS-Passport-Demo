@@ -1,119 +1,72 @@
-var moment = require('moment'),
-      async = require('async');
+var moment = require('moment');
 
-var ClassNote = require('../models/classnote.js');
-var Page = require('../models/page.js');
+var Blog = require('../models/blog.js');
 
 // main page
 exports.index =  function(req,res){
-  
-  async.parallel({
-      notes: function(callback){
-        // get all classnote items ordered by classdate
-        ClassNote.find({}).sort('classdate').exec(function(err, notes){
 
-          for (n in notes) {
-            notes[n].formattedDate = function() {
-                  tmpDate = moment(this.classdate).add('minutes',moment().zone());
-                  return moment(tmpDate).format("MMM Do");
-              };
-          }
+  res.send("hello world")
 
-          callback(null, notes);
-          
-        });
-
-      },
-      mainpage: function(callback){
-        // get all classnote items ordered by classdate
-        Page.findOne({urltitle:'mainpage'}).exec(function(err, page){
-          callback(null, page);          
-        });
-      },
-  },
-
-  function(err, results) {
-      templateData = {
-        notes : results.notes,
-        page : results.mainpage
-        
-
-      }
-      res.render('index.html', templateData);
-  });
 };
 
 // controller for individual note view
-exports.notes = function(req, res){
-  async.parallel({
-      notes: function(callback){
-          // get all classnote items ordered by classdate
-          ClassNote.find({},"published title urltitle classdate").sort('classdate').exec(function(err, notes){
+exports.write = function(req, res){
+  var template_data = {
+    title : 'Create a new blog post'
+  };
 
-            for (n in notes) {
-              notes[n].formattedDate = function() {
-                    tmpDate = moment(this.classdate).add('minutes',moment().zone());
-                    return moment(tmpDate).format("MMM Do");
-                };
-            }
+  res.render('blog_form.html', template_data)
+};
 
-            callback(null, notes);
+exports.write_post = function(req, res){
+  
+  if ( req.body.blog_id != undefined ) {
             
-          });
+      Blog.findById(req.param('blog_id'), function(err, blogpost){
 
-      },
-      note: function(callback){
-       
-        ClassNote.findOne({urltitle:req.params.urltitle}, function(err, note){
-          callback(null, note);
-        });
+        if (err) {
+          res.send("unable to find the note");
+        }
 
-      },
+        blogpost.title = req.body.title;
+        blogpost.body = req.body.body;
+        blogpost.save();
 
-  },
-  function(err, results) {
-      templateData = {
-        notes : results.notes,
-        note : results.note
-      }
-      res.render('notes.html', templateData);
-  });
-}
+        res.redirect('/edit/'+blogpost.id);
+      });
 
-exports.pagedisplay = function(req, res) {
+  } else {
 
-  async.parallel({
-      notes: function(callback){
-          // get all classnote items ordered by classdate
-          ClassNote.find({},"published title urltitle classdate").sort('classdate').exec(function(err, notes){
+    // Create a new blog post
+    var blogpost = new Blog(); // create Blog object
+    blogpost.title = req.body.title;
+    blogpost.urltitle = req.body.title.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_')
+    blogpost.body = req.body.body;
+    
+    blogpost.user = req.user; // associate logged in user with blog post
+    
+    blogpost.save();
+    
+    res.redirect('/edit/'+blogpost.id);
 
-            for (n in notes) {
-              notes[n].formattedDate = function() {
-                    tmpDate = moment(this.classdate).add('minutes',moment().zone());
-                    return moment(tmpDate).format("MMM Do");
-                };
-            }
+  }
 
-            callback(null, notes);
-            
-          });
+};
 
-      },
-      page: function(callback){
-       
-        Page.findOne({urltitle:req.params.pageslug}, function(err, page){
-          callback(null, page);
-        });
+exports.edit = function(req,res) {
+    
+    Blog.findById(req.param('blog_id'), function(err, blogpost){
 
-      },
+      if (err) {
+        res.send("Uhoh something went wrong");
+        console.log(err);
 
-  },
-  function(err, results) {
-      var templateData = {
-        notes : results.notes,
-        page : results.page
-      };
-      res.render('page.html', templateData);
-  });
+      } else {
+        res.send("found : " + blogpost.title);
+      } 
 
-}
+
+
+    });
+
+};
