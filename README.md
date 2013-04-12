@@ -1,4 +1,4 @@
-# ExpressJS w/ templates
+# ExpressJS w/ Passport Local + Mongo
 
 ## What it is
 
@@ -8,6 +8,34 @@ While ExpressJS does not do everything, it is great for the small apps that need
 
 * ExpressJS website - [http://expressjs.com/](http://expressjs.com/)
 * Hogan-Express repo - [https://github.com/vol4ok/hogan-express](https://github.com/vol4ok/hogan-express)
+
+### Passport - simple authentication
+
+<http://passportjs.org/>
+
+Passport provides user authentication with username, password or many popular third party single signon solutions like Facebook and Google.
+
+Almost all of Passport's configuration and setup takes place in four files
+
+* **.env** - 
+	* we add a new environment variable called **COOKIEHASH** and put some random numbers and letters that will be a hash to encrpyt our cookies.
+	* You must add this has to your Heroku app's config
+
+			heroku config:add COOKIEHASH=MY_SECRET_HASH
+
+* **app.js** - 
+	* Configure Passport to use Passport Local Strategy.
+	* Use new module 'connect-mongo' to store out sessions in MongoDB.
+	* Define our registration, log in and log out routes.
+	* Lock down routes using **account.ensureAuthenticated**.
+* **/models/user.js**
+	* Uses Passport Local Mongoose plugin to store User schema in MongoDB.
+	* **This file can be copied directly into your /models directory.**
+* **/routes/account.js**
+	* Registration, Log in, Log out routes handled here.
+	* **This file can be copied directly into your /routes directory.**
+
+
 
 ### Package.json
 
@@ -36,52 +64,57 @@ The **package.json** file defines the name of our NodeJS app and any dependencie
 	  }
 	}
 
-### Templates & /views directory
+### Passport Configuration
 
-Templates are great. They keep your code and your design separate. In code you pass data variables into a template which is rendered into HTML, RSS, XML or whatever. The code is in one file, **app.js** and the template will be in another **/views/index.html**.
+Inside app.js, three new modules are used in app.js
 
-### hogan-express template engine
+* Passport  / passport
+* Passport Local / localStrategy
+* Connect-Mongo / mongoStore
 
-Hogan-express is one template engine, EJS and Jade are others. Hogan-express will allow us to not only separate code and design but divide the design into a layout (header/footer) and content page.
+#### Initialize Sessions & Cookies
 
-In /views, there are three files
+	// TURN ON COOKIES
+	// COOKIEHASH in your .env file (must be available on heroku)
+	app.use(express.cookieParser(process.env.COOKIEHASH));
 
-* /views/layout.html - this is the Header and Footer of the website
-* /views/index.html - this is our main page template
-* /views/page2.html - this is a slightly modified version of index.html
+	// STORE SESSION IN MONGODB
+	// mongoStore for session storage is using the connect-mongodb module
+	app.use(express.session({ 
+	    store: new mongoStore({url:process.env.MONGOLAB_URI}),
+	    maxAge: 300000,
+	    secret: process.env.COOKIEHASH
+	  })
+	);
 
-### Using Templates
 
-ExpressJS needs to get a little configured
+#### Initalize Passport
 
-	//  templates directory
-	app.set('views', __dirname + '/views');
+	// TURN ON PASSPORT AUTHENTICATION MODULE
+	app.use(passport.initialize());
+	app.use(passport.session());
 
-	// setup template engine - we're using Hogan-Express
-	// https://github.com/vol4ok/hogan-express
-	app.set('view engine', 'html');
-	app.set('layout','layout');
-	app.engine('html', require('hogan-express'));
+	// PREPARE User module - set up models
+	var User = require('./models/user.js');
 
-Route with template data and rendering. The main page '/' when requested will create a JavaScript object called templateData with two properties, content and title. The templateData object will get passed into the template for rendering.
+	// Configure passport to use Passport Local strategy
+	passport.use(new LocalStrategy(User.authenticate()));
+	passport.serializeUser(User.serializeUser());
+	passport.deserializeUser(User.deserializeUser());
 
-To display the template, the command res.render(templateName, templateData) is used.
+### /models/user.js
 
-	app.get('/', function(req, res) {
-		var templateData = {
-			content : 'Hello World',
-			title : 'ExpressJS Demo'
-		}
-		res.render('index', templateData);
-	});
+The User model uses Passport Local Mongoose plugin, this includes username, email, password. Additional fields can be included in the User schema, like birthdate, favorite_color or whatever you need.
 
-### Layouts
+This file is ready to be used, just copy it into your /models directory.
 
-Layouts are confusing but helpful. 
+### /routes/accounts.js
 
-When configured, ExpressJS will allow a layout to automatically 'wrap' around a rendered template page. Layout.html contains a {{{ yield }}} variable. 
+Accounts.js manages all the registration /register, log in /login and logout /logout requests. App.js defines a login post to use **passport.authenticate('local')**.
 
-When **res.render('index')** is executed, **index** is rendered first then passed into the **layout.html** template. The contents of the first rendering, **index.html**, are yielded into **layout.html**
+### /routes/index.js 
+
+Index.js includes /models/user.js to associate a user to a blog post. 
 
 ### MongoDB 
 

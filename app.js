@@ -37,10 +37,12 @@ app.configure(function(){
 
 });
 
-// COOKIEHASH in your .env file (also share with heroku)
+// TURN ON COOKIES
+// COOKIEHASH in your .env file (must be available on heroku)
 app.use(express.cookieParser(process.env.COOKIEHASH));
 
-//SESSION + connect-mongo mongoStore for session storage
+// STORE SESSION IN MONGODB
+// mongoStore for session storage is using the connect-mongodb module
 app.use(express.session({ 
     store: new mongoStore({url:process.env.MONGOLAB_URI}),
     maxAge: 300000,
@@ -48,17 +50,14 @@ app.use(express.session({
   })
 );
 
+// TURN ON PASSPORT AUTHENTICATION MODULE
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
-
-// set up models
+// PREPARE User module - set up models
 var User = require('./models/user.js');
 
-// Configure passport
+// Configure passport to use Passport Local strategy
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -81,11 +80,11 @@ app.post('/write', account.ensureAuthenticated, routes.write_post);
 app.get('/edit/:blog_id', account.ensureAuthenticated, routes.edit);
 app.post('/edit/:blog_id', account.ensureAuthenticated, routes.edit_post);
 
-// login
+// login GET + POST
 app.get('/login', account.login);
 app.post('/login', passport.authenticate('local'), account.login_post);
 
-// register
+// register GET + POST
 app.get('/register', account.register);
 app.post('/register', account.register_post);
 

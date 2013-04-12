@@ -1,7 +1,7 @@
 var moment = require('moment');
 
 var Blog = require('../models/blog.js');
-var User = require('../models/user.js');
+var User = require('../models/user.js'); 
 
 // main page
 exports.index =  function(req,res){
