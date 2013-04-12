@@ -16,21 +16,18 @@ The **package.json** file defines the name of our NodeJS app and any dependencie
 **package.json**
 
 	{
-	  "name": "itpdwdspring2013",
+	  "name": "dwd-nodejs-passportjs",
 	  "version": "0.0.1",
 	  
 	  "dependencies": {
 	    "express": "3.0.0rc5",
 	    "hogan-express" : "0.3.3",
+	    "mongoose" : "3.5.4",
+	    "moment" : "1.7.2",
 	    "passport": "0.1.x",
 	    "passport-local": "0.1.x",
 	    "passport-local-mongoose": "0.2.0",
-	    "mongodb" : "1.2.9",
-	    "mongoose" : "3.5.4",
-	    "forms" : "0.1.3",
-	    "markdown" : "0.4.0",
-	    "moment" : "1.7.2",
-	    "async" : "0.1.x"
+	    "connect-mongodb" : "1.1.5"
 	  },
 
 	  "engines" : {
