@@ -71,14 +71,15 @@ var routes = require('./routes/index.js');
 var account = require('./routes/account.js');
 
 app.get('/', routes.index);
+app.get('/user/:username', routes.user_posts);
 
 // create a blog post
 app.get('/write', account.ensureAuthenticated, routes.write);
 app.post('/write', account.ensureAuthenticated, routes.write_post);
 
 // edit a blog post
-app.get('/edit/:blogpost_id', account.ensureAuthenticated, routes.edit);
-app.post('/edit/:blogpost_id', account.ensureAuthenticated, routes.edit_post);
+app.get('/edit/:blog_id', account.ensureAuthenticated, routes.edit);
+app.post('/edit/:blog_id', account.ensureAuthenticated, routes.edit_post);
 
 // login
 app.get('/login', account.login);
