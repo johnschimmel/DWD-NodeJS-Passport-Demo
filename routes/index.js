@@ -58,7 +58,7 @@ exports.user_posts = function(req, res) {
 
           };
 
-          res.render('index.html', template_data);
+          res.render('user_posts.html', template_data);
         }
         
       });

@@ -8,10 +8,14 @@
 
 	    {{#posts}}
 	        <h2>{{ title }}</h2>
-	        <p>by <a href="/user/{{user.username}}">{{user.username}}</a></p>
+
 	        <p>{{& body }}</p>
 
-	        
+	        <br>
+	        {{#isOwner}}
+	        <a href="/edit/{{id}}" class="btn btn-primary btn-small">edit</a>
+	        {{/isOwner}}
+
 	        <hr>
 	    {{/posts}}
 	    <br><br>
