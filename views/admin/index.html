@@ -1,0 +1,35 @@
+<div class="row">
+	<div class="span8">
+		
+		<table class="table table-striped">
+			{{#notes}}
+			<tr>
+				<td>{{title}}</td>
+				<td>{{urltitle}}</td>
+				<td>{{formattedDate}}</td>
+				<td><a href="/admin/edit/{{id}}">edit</a></td>
+				<td><a href="/notes/{{urltitle}}">view</a></td>
+				<td>{{^published}}Draft{{/published}}{{#published}}Published{{/published}}</td>
+				
+			</tr>
+			{{/notes}}
+		</table>
+		<br><Br>
+		<h2>Pages</h2>
+		<hr>
+
+		<table class="table table-striped">
+		{{#pages}}
+			<tr>
+				<td>{{title}}</td>
+				<td>{{urltitle}}</td>
+				<td><a href="/admin/page_edit/{{id}}">edit</a></td>
+				<td><a href="/page/{{urltitle}}">view</a></td>
+				<td>{{^published}}Draft{{/published}}{{#published}}Published{{/published}}</td>
+				
+			</tr>
+		{{/pages}}
+		</table>
+		
+	</div>
+</div>

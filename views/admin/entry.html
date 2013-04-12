@@ -1,0 +1,50 @@
+<style>
+	textarea { width:500px;}
+</style>
+
+<div class="row">
+	
+	<div class="span12">
+
+		<h1>{{ title }}</h1>
+	</div>
+</div>
+<div class="row">
+	<div class="span8">
+
+		<form method="POST" action="/admin/edit">
+			<div class="field required">
+				<label for="id_title">Title</label>
+				<input type="text" name="title" id="id_title" value="{{note.title}}">
+			</div>
+			<div class="field required">
+				<label for="id_urltitle">URL Slug</label>
+				<input type="text" name="urltitle" id="id_urltitle" value="{{note.urltitle}}">
+			</div>
+			<div class="field required">
+				<label for="id_classdate">Classdate</label>
+				<input type="text" name="classdate" id="id_classdate" value="{{note.classdate}}">
+			</div>
+			<div class="field required">
+				<label for="id_intro">Intro</label>
+				<textarea name="intro" id="id_intro" rows="4" cols="150">{{note.intro}}</textarea>
+			</div>
+			<div class="field required">
+				<label for="id_notes">Notes</label>
+				<textarea name="notes" id="id_notes" rows="6" cols="150">{{note.notes}}</textarea>
+			</div>
+			<div class="field required">
+				<label for="id_assignment">Assignment</label>
+				<textarea name="assignment" id="id_assignment" rows="6" cols="150">{{note.assignment}}</textarea>
+			</div>
+			<div class="field">
+				<label for="id_published">Published?</label>
+				<input type="checkbox" name="published" id="id_published" value="on" {{#note.published}}checked=checked{{/note.published}}>
+			</div>
+
+			
+			{{#note}}<input type="hidden" name='noteid' id='noteid' value='{{note.id}}'>{{/note}}
+			<input type="submit" class="btn">
+		</form>
+	</div>
+</div>

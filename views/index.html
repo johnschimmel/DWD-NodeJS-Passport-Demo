@@ -1,0 +1,90 @@
+<!-- Example row of columns -->
+<style>
+
+	ul#sidenav {
+		margin-top:20px;
+	}
+
+	ul#sidenav li {
+		line-height:20px;
+		border: 1px solid #e5e5e5;
+		font-size:13px;
+		padding:0px 15px;
+		padding-top:12px;
+		padding-bottom:12px;
+	}
+
+	ul#sidenav li a {
+		padding-top:12px;
+		padding-bottom:12px;
+	}
+
+	ul#sidenav li a:hover {
+		background-color:#fff;
+	}
+	ul#sidenav > li.first-child > a {
+		border-radius: 6px 6px 0 0;
+	}
+
+	ul#sidenav .icon-chevron-right {
+		float:right;
+		margin-top:2px;
+		margin-right:-6px;
+	}
+
+	span.subnavtxt { color : gray;}
+</style>
+
+<div class="row">
+
+	<div class="span3 hidden-phone" >
+		<nav>
+			<ul id="sidenav" class="nav nav-list">
+			  {{#notes}}
+			  <li>
+
+			  	{{#published}}<a href="/notes/{{urltitle}}">{{/published}}
+			  		<span class='subnavtxt'>{{formattedDate}}</span><br>
+			  		<b>{{title}}</b>
+			  		
+			  		
+			  	{{#published}}</a>{{/published}}
+			  	
+			  </li>
+			  {{/notes}}
+
+			</ul>
+		</nav>
+	</div>
+    <div class="span7">
+    {{#page}}
+        <h2>{{ title }}</h2>
+        <p>{{& body }}</p>
+    {{/page}}
+    <br><br>
+
+    <h2>Syllabus</h2>
+
+    <hr>
+
+    {{#notes}}
+	  <div class="">
+  		<span class='subnavtxt'>{{formattedDate}}</span>
+  		<h4>
+  			{{#published}}<a href="/notes/{{urltitle}}">{{/published}}
+  			{{title}}
+  			{{#published}}</a>{{/published}}
+  		</h4>
+  		{{& intro}}
+  		<p>{{#published}}<a href="/notes/{{urltitle}}">View handouts</a>{{/published}}
+  		
+	  	{{#published}}</a>{{/published}}
+
+	  </div>
+	  <hr>
+    {{/notes}}
+
+    </div>
+
+    
+</div>

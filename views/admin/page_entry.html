@@ -1,0 +1,22 @@
+<style>
+	textarea { width:500px;}
+</style>
+
+<div class="row">
+	
+	<div class="span12">
+
+		<h1>PAGE: {{ title }}</h1>
+	</div>
+</div>
+<div class="row">
+	<div class="span8">
+
+		<form method="POST" action="/admin/page_edit">
+			{{& page_entry_form }}
+
+			{{#page}}<input type="hidden" name='pageid' id='pageid' value='{{page.id}}'>{{/page}}
+			<input type="submit" class="btn">
+		</form>
+	</div>
+</div>
