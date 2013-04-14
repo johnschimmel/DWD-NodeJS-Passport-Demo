@@ -41,11 +41,17 @@
                     <div class="nav-collapse collapse">
                         <ul class="nav">
                             <li class="active"><a href="/">Home</a></li>
-
+                            {{#currentUser}}
                             <li>
                                 <a href="/user/{{currentUser.username}}">{{currentUser.username}}
                                 </a>
                             </li>
+                            <li><a href='/logout'>Logout</a></li>
+                            {{/currentUser}}
+                            {{^currentUser}}
+                            <li><a href='/login'>Login</a></li>
+                            <li><a href='/register'>Register</a></li>
+                            {{/currentUser}}
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>
