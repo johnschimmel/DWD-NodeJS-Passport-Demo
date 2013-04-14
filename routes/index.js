@@ -53,10 +53,13 @@ exports.user_posts = function(req, res) {
             title : user.username + "'s Blog Posts",
             posts : blogposts, 
             currentUser : req.user,
-            bloguser : user,
-            //isOwner : req.user.id == user.id
-
+            bloguser : user
           };
+          
+          // if logged in, is this user the requested user?
+          if (req.user != undefined){
+            template_data.isOwner = (req.user.id == user.id)
+          }
 
           res.render('user_posts.html', template_data);
         }

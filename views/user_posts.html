@@ -7,14 +7,18 @@
     	<br>
 
 	    {{#posts}}
-	        <h2>{{ title }}</h2>
+	        <h2>
+	        	{{ title }}
+	        	
+	        	{{#isOwner}}
+		        <a href="/edit/{{id}}" class="btn btn-primary btn-small">edit</a>
+		        {{/isOwner}}
+	        </h2>
 
 	        <p>{{& body }}</p>
 
 	        <br>
-	        {{#isOwner}}
-	        <a href="/edit/{{id}}" class="btn btn-primary btn-small">edit</a>
-	        {{/isOwner}}
+	        
 
 	        <hr>
 	    {{/posts}}
