@@ -7,7 +7,7 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , mongoose = require('mongoose')
-  , mongoStore = require('connect-mongodb')
+  , mongoStore = require('connect-mongo')(express)
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
   
@@ -44,7 +44,9 @@ app.use(express.cookieParser(process.env.COOKIEHASH));
 // STORE SESSION IN MONGODB
 // mongoStore for session storage is using the connect-mongodb module
 app.use(express.session({ 
-    store: new mongoStore({url:process.env.MONGOLAB_URI}),
+    store : new mongoStore({
+      url : process.env.MONGOLAB_URI
+    }),
     maxAge: 300000,
     secret: process.env.COOKIEHASH
   })
